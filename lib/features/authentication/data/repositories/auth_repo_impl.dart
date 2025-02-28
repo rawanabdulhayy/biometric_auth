@@ -46,4 +46,17 @@ class AuthRepositoryImpl implements AuthRepository {
     // If biometrics fail or are unavailable, fall back to PIN/password
     return await _authenticateWithFallback();
   }
+
+  Future<bool> _authenticateWithFallback() async {
+    String? storedPin = await secureStorage.read(key: "user_pin");
+
+    if (storedPin != null) {
+      // Show a PIN/password input dialog (to be implemented in UI)
+      String? enteredPin = await _showPinInputDialog();
+
+      return enteredPin == storedPin;
+    }
+
+    return false;
+  }
 }
