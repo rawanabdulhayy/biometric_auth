@@ -59,4 +59,9 @@ class AuthRepositoryImpl implements AuthRepository {
 
     return false;
   }
+
+  Future<String?> _showPinInputDialog() async {
+    // TODO: Implement UI logic to prompt the user for a PIN/password
+    return null;
+  }
 }
