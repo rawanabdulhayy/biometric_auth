@@ -108,7 +108,7 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       bool isBiometricSupported = await checkBiometricSupport();
       if (!isBiometricSupported) {
-        return await _authenticateWithFallback(context);
+        return await authenticateWithFallback(context);
       }
 
       bool authenticated = await auth.authenticate(
@@ -119,10 +119,10 @@ class AuthRepositoryImpl implements AuthRepository {
         ),
       );
 
-      return authenticated ? true : await _authenticateWithFallback(context);
+      return authenticated ? true : await authenticateWithFallback(context);
     } catch (e) {
       print("Authentication failed: $e");
-      return await _authenticateWithFallback(context);
+      return await authenticateWithFallback(context);
     }
   }
   //
@@ -139,8 +139,8 @@ class AuthRepositoryImpl implements AuthRepository {
   //   // TODO: Implement UI logic for PIN input
   //   return null;
   // }
-
-  Future<bool> _authenticateWithFallback(BuildContext context) async {
+@override
+  Future<bool> authenticateWithFallback(BuildContext context) async {
     String? storedPin = await secureStorage.read(key: "user_pin");
     if (storedPin != null) {
       String? enteredPin = await _showPinInputDialog(context);

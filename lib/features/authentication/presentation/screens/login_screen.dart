@@ -17,7 +17,11 @@ class LoginScreen extends StatelessWidget {
                   return CircularProgressIndicator();
                 } else if (state is AuthAuthenticated) {
                   return Text("Authenticated!");
-                } else if (state is AuthFailed) {
+                }
+                // } else if (state is AuthFallbackRequired){
+                //   //TODO: incorporate a function in cubit to read that calls a use case that calls authenticateWithFallback from the interface repo
+                // }
+                else if (state is AuthFailed) {
                   return Text("Authentication Failed. Try again.");
                 } else {
                   return ElevatedButton(
