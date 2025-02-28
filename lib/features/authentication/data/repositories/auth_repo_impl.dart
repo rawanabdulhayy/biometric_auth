@@ -1,3 +1,4 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:local_auth/local_auth.dart';
 
 import '../../domain/repositories/auth_repo_interface.dart';
@@ -6,6 +7,8 @@ import '../../domain/repositories/auth_repo_interface.dart';
 class AuthRepositoryImpl implements AuthRepository {
   /// Instance of `LocalAuthentication` to interact with the device's biometric authentication.
   final LocalAuthentication auth = LocalAuthentication();
+  final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
+
 
   /// Method to authenticate the user using biometrics.
   ///
