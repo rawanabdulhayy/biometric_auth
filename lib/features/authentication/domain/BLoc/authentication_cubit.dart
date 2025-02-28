@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../usecases/authenticate_user.dart';
@@ -8,13 +9,10 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
 
   AuthenticationCubit({required this.authenticateUser}) : super(AuthInitial());
 
-  Future<void> authenticate() async {
-    emit(
-        AuthLoading()); // Show loading state while authentication is in progress.
-    Future<void> authenticate() async {
-      emit(AuthLoading());
+  Future<void> authenticate(BuildContext context) async {
+    emit(AuthLoading()); // Show loading state while authentication is in progress.
       try {
-        final isAuthenticated = await authenticateUser.requestAuthentication();
+        final isAuthenticated = await authenticateUser.requestAuthentication(context);
         if (isAuthenticated) {
           emit(AuthAuthenticated());
         } else {
@@ -25,7 +23,6 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       }
     }
   }
-}
 // // authentication_cubit.dart
 // import 'package:flutter_bloc/flutter_bloc.dart';
 // import '../../domain/usecases/authenticate_user.dart';

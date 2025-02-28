@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 abstract class AuthRepository {
-  Future<bool> authenticate();
+  Future<bool> authenticate(BuildContext context);
 }

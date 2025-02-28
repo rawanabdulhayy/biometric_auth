@@ -29,7 +29,7 @@ void main() {
 /// Fake authentication repository for testing.
 class FakeAuthRepository implements AuthRepository {
   @override
-  Future<bool> authenticate() async {
+  Future<bool> authenticate(BuildContext context) async {
     return true; // Always return true for testing.
   }
 }

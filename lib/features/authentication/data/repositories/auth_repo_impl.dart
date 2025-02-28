@@ -75,13 +75,15 @@
 //
 // }
 
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:local_auth/local_auth.dart';
 import '../../domain/repositories/auth_repo_interface.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final LocalAuthentication auth = LocalAuthentication();
-  final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
+  // final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
+  final FlutterSecureStorage secureStorage = FlutterSecureStorage(aOptions: AndroidOptions(encryptedSharedPreferences: true));
 
   /// Checks if the device supports biometric authentication.
   Future<bool> checkBiometricSupport() async {
@@ -102,11 +104,11 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<bool> authenticate() async {
+  Future<bool> authenticate(BuildContext context) async {
     try {
       bool isBiometricSupported = await checkBiometricSupport();
       if (!isBiometricSupported) {
-        return await _authenticateWithFallback();
+        return await _authenticateWithFallback(context);
       }
 
       bool authenticated = await auth.authenticate(
@@ -117,25 +119,65 @@ class AuthRepositoryImpl implements AuthRepository {
         ),
       );
 
-      return authenticated ? true : await _authenticateWithFallback();
+      return authenticated ? true : await _authenticateWithFallback(context);
     } catch (e) {
       print("Authentication failed: $e");
-      return await _authenticateWithFallback();
+      return await _authenticateWithFallback(context);
     }
   }
+  //
+  // Future<bool> _authenticateWithFallback() async {
+  //   String? storedPin = await secureStorage.read(key: "user_pin");
+  //   if (storedPin != null) {
+  //     String? enteredPin = await _showPinInputDialog();
+  //     return enteredPin == storedPin;
+  //   }
+  //   return false;
+  // }
+  //
+  // Future<String?> _showPinInputDialog() async {
+  //   // TODO: Implement UI logic for PIN input
+  //   return null;
+  // }
 
-  Future<bool> _authenticateWithFallback() async {
+  Future<bool> _authenticateWithFallback(BuildContext context) async {
     String? storedPin = await secureStorage.read(key: "user_pin");
     if (storedPin != null) {
-      String? enteredPin = await _showPinInputDialog();
+      String? enteredPin = await _showPinInputDialog(context);
       return enteredPin == storedPin;
     }
     return false;
   }
 
-  Future<String?> _showPinInputDialog() async {
-    // TODO: Implement UI logic for PIN input
-    return null;
+  Future<String?> _showPinInputDialog(BuildContext context) async {
+    TextEditingController pinController = TextEditingController();
+
+    return await showDialog<String>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Enter Your PIN"),
+          content: TextField(
+            controller: pinController,
+            keyboardType: TextInputType.number,
+            obscureText: true,
+            decoration: const InputDecoration(labelText: "PIN"),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(null), // User cancels input
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(pinController.text); // Return entered PIN
+              },
+              child: const Text("Confirm"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> storeAuthToken(String token) async {

@@ -21,7 +21,7 @@ class LoginScreen extends StatelessWidget {
                   return Text("Authentication Failed. Try again.");
                 } else {
                   return ElevatedButton(
-                    onPressed: () => context.read<AuthenticationCubit>().authenticate(),
+                    onPressed: () => context.read<AuthenticationCubit>().authenticate(context),
                     child: Text("Use Biometrics"),
                   );
                 }
