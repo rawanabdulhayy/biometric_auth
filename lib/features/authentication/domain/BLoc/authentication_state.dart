@@ -10,3 +10,5 @@ class AuthLoading extends AuthenticationState {} // State when authentication is
 class AuthAuthenticated extends AuthenticationState {} // State when authentication succeeds.
 
 class AuthFailed extends AuthenticationState {} // State when authentication fails.
+
+class AuthFallbackRequired extends AuthenticationState {} // State when authentication fails.
