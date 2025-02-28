@@ -19,18 +19,31 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<bool> authenticate() async {
     // Check if the device supports biometric authentication (fingerprint/Face ID).
-    bool canAuthenticate = await auth.canCheckBiometrics;
+    bool canAuthenticate = await auth.canCheckBiometrics  || await auth.isDeviceSupported();
 
-    // If the device does not support biometrics, return false.
-    if (!canAuthenticate) return false;
+  //   // If the device does not support biometrics, return false.
+  //   if (!canAuthenticate) return false;
+  //
+  //   // Trigger biometric authentication and return the result.
+  //   return await auth.authenticate(
+  //     localizedReason: "Authenticate to access the app", // Message displayed on the authentication prompt.
+  //     options: AuthenticationOptions(
+  //       biometricOnly: true, // Ensures that only biometrics (Face ID/Fingerprint) are used.
+  //       stickyAuth: true, // Keeps authentication active even if the app goes into the background.
+  //     ),
+  //   );
 
-    // Trigger biometric authentication and return the result.
-    return await auth.authenticate(
-      localizedReason: "Authenticate to access the app", // Message displayed on the authentication prompt.
-      options: AuthenticationOptions(
-        biometricOnly: true, // Ensures that only biometrics (Face ID/Fingerprint) are used.
-        stickyAuth: true, // Keeps authentication active even if the app goes into the background.
-      ),
-    );
+    //authenticate returns a bool value
+    if (canAuthenticate) {
+      bool authenticated = await auth.authenticate(
+        localizedReason: "Authenticate to access the app",
+        options: const AuthenticationOptions(biometricOnly: true, stickyAuth: true),
+      );
+
+      if (authenticated) return true;
+    }
+
+    // If biometrics fail or are unavailable, fall back to PIN/password
+    return await _authenticateWithFallback();
   }
 }
